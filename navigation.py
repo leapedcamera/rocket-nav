@@ -1,7 +1,6 @@
 """
-A simple free integration (strapdown inertial navigation) demo of Sim.
-Created on 2018-01-23
-@author: dongxiaoguang
+Navigation simulation of rocket trajectory 
+@author: leapedcamera
 """
 
 import os
@@ -51,12 +50,12 @@ ini_pos_vel_att = np.genfromtxt(motion_def_path+"/rocket.csv",\
 ini_pos_vel_att[0] = ini_pos_vel_att[0] * D2R
 ini_pos_vel_att[1] = ini_pos_vel_att[1] * D2R
 ini_pos_vel_att[6:9] = ini_pos_vel_att[6:9] * D2R
+
 # add initial states error if needed
 ini_vel_err = np.array([0.0, 0.0, 0.0]) # initial velocity error in the body frame, m/s
 ini_att_err = np.array([0.0, 0.0, 0.0]) # initial Euler angles error, deg
 ini_pos_vel_att[3:6] += ini_vel_err
 ini_pos_vel_att[6:9] += ini_att_err * D2R
-
 
 #### Load GPS simulator
 gps_orbits = orb.orbit()
@@ -84,7 +83,8 @@ sim = ins_sim.Sim([imu_fs, gps_fs, 0.0],
                     env=None,
                     algorithm=[algo1, algo2],
                     orbit=gps_orbits )
-# run the simulation for 1000 timess
+
+# run the simulation for 3 times
 sim.run(3)
 
 # generate simulation results, summary
@@ -104,6 +104,7 @@ pos[:,0] = pos[:,0] - pos[0,0]
 pos[:,1] = pos[:,1] - pos[0,1]
 pos[:,2] = pos[:,2] - pos[0,2] + ini_pos_vel_att[2]
 
+# Plot the truth trajectory from the sim
 max_z = max(pos[:, 2])
 min_z = min(pos[:, 2])
 max_x = max(pos[:, 0])
@@ -154,14 +155,15 @@ ax1.set_xlabel("X - East (m)")
 ax1.set_ylabel("Y - North (m)")
 ax1.set_zlabel("Z - Altitude Above Ground Level (m)")
 ax1.set_title("Flight Trajectory")
-#ax1.set_xlim(min_xy, max_xy)
-#ax1.set_ylim(min_xy, max_xy)
-#ax1.set_zlim(min_z, max_z)
-#ax1.view_init(15, 45)
-#ax1.set_box_aspect(None, zoom=0.95)  # 95% for label adjustment
-#plt.show()
+ax1.set_xlim(min_xy, max_xy)
+ax1.set_ylim(min_xy, max_xy)
+ax1.set_zlim(min_z, max_z)
+ax1.view_init(15, 45)
+ax1.set_box_aspect(None, zoom=0.95)  # 95% for label adjustment
+plt.show()
 
 sim.results(err_stats_start=-1, gen_kml=True)
+
 # plot postion error
 sim.plot(['pos'], opt={'pos':'error', 'monte':'true'})
 sim.plot(['vel'], opt={'vel':'error'})
