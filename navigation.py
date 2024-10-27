@@ -24,7 +24,7 @@ gps_fs = 1.0            # GPS sample frequency
 '''
 test Sim
 '''
-#### IMU model, typical for IMU381
+# IMU model, typical for IMU381
 imu_err = {'gyro_b': np.array([0.0, 0.0, 0.0]),
             'gyro_arw': np.array([0.25, 0.25, 0.25]) * 1.0,
             'gyro_b_stability': np.array([3.5, 3.5, 3.5]) * 1.0,
@@ -41,7 +41,8 @@ odo_err = {'scale': 0.999,
 gps_err = { 'mode': 'tight',
             'stdp': np.array([5.0, 5.0, 7.0]),
             'stdv': np.array([0.05, 0.05, 0.05])}
-# do not generate GPS and magnetometer data
+
+# Generate Sensor Data
 imu = imu_model.IMU(accuracy=imu_err, axis=6, gps=True, gps_opt=gps_err, odo=True, odo_opt=odo_err)
 
 
@@ -51,13 +52,13 @@ ini_pos_vel_att[0] = ini_pos_vel_att[0] * D2R
 ini_pos_vel_att[1] = ini_pos_vel_att[1] * D2R
 ini_pos_vel_att[6:9] = ini_pos_vel_att[6:9] * D2R
 
-# add initial states error if needed
+# Add initial states error if needed
 ini_vel_err = np.array([0.0, 0.0, 0.0]) # initial velocity error in the body frame, m/s
 ini_att_err = np.array([0.0, 0.0, 0.0]) # initial Euler angles error, deg
 ini_pos_vel_att[3:6] += ini_vel_err
 ini_pos_vel_att[6:9] += ini_att_err * D2R
 
-#### Load GPS simulator
+# Load GPS simulator
 gps_orbits = orb.orbit()
 rinex=[ motion_def_path+"/AMC400USA_R_20230290000_15M_GN.rnx",\
                            motion_def_path+"/BREW00USA_R_20230290000_15M_GN.rnx",\
@@ -86,6 +87,7 @@ sim = ins_sim.Sim([imu_fs, gps_fs, 0.0],
 
 # run the simulation for 3 times
 sim.run(3)
+
 
 # generate simulation results, summary
 t = np.array(sim.dmgr.time.data)
