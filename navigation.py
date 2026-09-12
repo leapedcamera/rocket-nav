@@ -71,7 +71,7 @@ rinex=[ motion_def_path+"/AMC400USA_R_20230290000_15M_GN.rnx",\
 for iRin in rinex:
     gps_orbits.loadRinexN(iRin)
 
-# create the algorith object
+### Create the algorithm object
 algo1 = free_integration.FreeIntegration(ini_pos_vel_att)
 algo2 = ins_tight.InsTight(gps_orbits, True)
 
@@ -85,11 +85,10 @@ sim = ins_sim.Sim([imu_fs, gps_fs, 0.0],
                     algorithm=[algo1, algo2],
                     orbit=gps_orbits )
 
-# run the simulation for 3 times
-sim.run(3)
+### Run the simulation for 3 times
+sim.run(1)
 
-
-# generate simulation results, summary
+### Generate simulation results, summary
 t = np.array(sim.dmgr.time.data)
 pos = np.array(sim.dmgr.ref_pos.data)
 quat = np.array(sim.dmgr.ref_att_quat.data)

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from  gnss_ins_sim.attitude import attitude
 import math
 
+t_end = 10
+
 env = Environment(
     latitude=32.990254,
     longitude=-106.974998,
@@ -210,13 +212,15 @@ plt.show()
 test_flight.info()
 test_flight.all_info()
 
+end_index = np.absolute(t-t_end).argmin()
+
 import csv
 with open('./data/rocket.csv', 'w') as csvFile:
     rocketWriter = csv.writer(csvFile)
     rocketWriter.writerow(('ini lat (deg)','ini lon (deg)','ini alt (m)','ini vx_body (m/s)','ini vy_body (m/s)','ini vz_body (m/s)','ini yaw (deg)','ini pitch (deg)','ini roll (deg)'))
     rocketWriter.writerow( ('32.990254', '-106.974998', '1400', v_b[0,0], v_b[0,1], v_b[0,2], ypr[0,0], ypr[0,1], ypr[0,2] ))
     rocketWriter.writerow(('command type','yaw (deg)','pitch (deg)','roll (deg)','vx_body (m/s)','vy_body (m/s)','vz_body (m/s)','command duration (s)','GPS visibility'))
-    for idx in range(1,len(t)): 
+    for idx in range(1,end_index): 
         rocketWriter.writerow( ( '2', ypr[idx,0],ypr[idx,1], ypr[idx,2], v_b[idx,0], v_b[idx,1], v_b[idx,2], t[idx] - t[idx - 1], '1' ))
     
 
